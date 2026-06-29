@@ -1,7 +1,7 @@
 # 🎙️ AI Voice Agent SaaS Platform
 
 <p align="center">
-  <h1 align="center">AI Voice Agent SaaS Platform</h1>
+  
   <p align="center">
     A modern, production-ready AI Voice Agent platform built with <strong>Next.js, Node.js, PostgreSQL, OpenAI Realtime API, Deepgram, and ElevenLabs.</strong>
   </p>
