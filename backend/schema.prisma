@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  passwordHash  String
+  role          String   @default("user")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  agents        Agent[]
+  conversations Conversation[]
+  calls         Call[]
+}
+
+model Agent {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  model         String
+  instructions  String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  ownerId       String
+  owner         User     @relation(fields: [ownerId], references: [id])
+
+  calls         Call[]
+  conversations Conversation[]
+  knowledgeBases KnowledgeBase[]
+}
+
+model Conversation {
+  id            String   @id @default(cuid())
+  title         String?
+  status        String   @default("active")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+
+  agentId       String
+  agent         Agent    @relation(fields: [agentId], references: [id])
+
+  calls         Call[]
+}
+
+model Call {
+  id            String   @id @default(cuid())
+  callType      String   @default("voice")
+  status        String   @default("scheduled")
+  startedAt     DateTime?
+  endedAt       DateTime?
+  recordingUrl  String?
+  transcript    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+
+  agentId       String
+  agent         Agent    @relation(fields: [agentId], references: [id])
+
+  conversationId String?
+  conversation  Conversation? @relation(fields: [conversationId], references: [id])
+}
+
+model KnowledgeBase {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  content       String?
+  sourceUrl     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  agentId       String
+  agent         Agent    @relation(fields: [agentId], references: [id])
+}
